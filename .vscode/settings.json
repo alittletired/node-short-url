@@ -1,0 +1,17 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // 默认行尾字符。使用 \n 表示 LF，\r\n 表示 CRLF。
+  "files.eol": "\n",
+  "editor.formatOnSave": true,
+  "editor.wordWrap": "on",
+  "editor.suggestOnTriggerCharacters": true,
+  "emmet.showAbbreviationSuggestions": false,
+  // 配置 glob 模式以在搜索中排除文件和文件夹。从 files.exclude 设置中继承所有 glob 模式。
+  "search.exclude": {
+    "**/node_modules": true
+  }
+}
