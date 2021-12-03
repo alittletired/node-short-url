@@ -1,15 +1,19 @@
 import Config, { ConfigSchema } from './Config'
 import { ModelSchema } from './Model'
-import ShortUrl, { ShortUrlSchema } from './ShortUrl'
+import UrlMapping, { UrlMappingSchema } from './UrlMapping'
 const models = {
   Config,
-  ShortUrl,
+  UrlMapping,
 }
-export default models
 
 type Models = typeof models
-export const modelSchema: { [M in keyof Models]: ModelSchema<InstanceType<Models[M]>> } =
-  {
-    Config: ConfigSchema,
-    ShortUrl: ShortUrlSchema,
-  }
+type ModelSchemas = {
+  [M in keyof Models]: ModelSchema<InstanceType<Models[M]>>
+}
+
+export const modelSchema: ModelSchemas = {
+  Config: ConfigSchema,
+  UrlMapping: UrlMappingSchema,
+}
+
+export default models

@@ -1,14 +1,23 @@
 import { ObjectId } from 'mongodb'
 import { ModelSchema, Model } from './Model'
 
-export default class ShortUrl implements Model {
-  constructor(public originUrl: string, public shortUrl: string, public id?: ObjectId) {}
+export default class UrlMapping implements Model {
+  constructor(
+    public originUrl: string,
+    public shortUrl: string,
+    public seq: string,
+    public id?: ObjectId,
+  ) {}
 }
-export const ShortUrlSchema: ModelSchema<ShortUrl> = {
+export const UrlMappingSchema: ModelSchema<UrlMapping> = {
   bsonType: 'object',
   required: ['originUrl', 'shortUrl'],
   properties: {
     _id: {},
+    seq: {
+      bsonType: 'number',
+      description: "'seq' is required and is a string",
+    },
     originUrl: {
       bsonType: 'string',
       description: "'originUrl' is required and is a string",
