@@ -1,21 +1,13 @@
-import { ObjectId } from 'mongodb'
-import { ModelSchema, Model } from './Model'
-
-export default class Config implements Model {
-  constructor(public key: string, public value: string, public id?: ObjectId) {}
+import mongoose from 'mongoose'
+export type ConfigDocument = mongoose.Document & {
+  key: string
+  value: string
 }
-export const ConfigSchema: ModelSchema<Config> = {
-  bsonType: 'object',
-  required: ['key', 'value'],
-  properties: {
-    _id: {},
-    key: {
-      bsonType: 'string',
-      description: "'key' is required and is a string",
-    },
-    value: {
-      bsonType: 'string',
-      description: "'value' is required and is a string",
-    },
+const configDocument = new mongoose.Schema<ConfigDocument>(
+  {
+    key: String,
+    value: String,
   },
-}
+  { timestamps: true },
+)
+export default mongoose.model<ConfigDocument>('Config', configDocument)

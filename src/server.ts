@@ -1,9 +1,12 @@
+import dotenv from 'dotenv'
 import express from 'express'
 import { connectToDatabase } from './components/database'
 
+dotenv.config()
 const app = express()
-const port = 3000
-connectToDatabase()
+const port = process.env.PORT
+
+Promise.all([connectToDatabase])
   .then(() => {
     app.get('/', (req, res) => {
       res.send('Hello World!')

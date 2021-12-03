@@ -1,5 +1,3 @@
-import db from '../components/database'
-
 function generate(originUrl: string) {
   return null
 }
