@@ -1,10 +1,9 @@
-const CHARSET =
-  '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+const CHARSET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const CHARSET_LEN = CHARSET.length
 
 export function encode(num: number) {
-  if (num === 0) {
-    return CHARSET[0]
+  if (num < 0) {
+    throw new Error(`num must be a positive integer.input: ${num}`)
   }
   let res = ''
   while (num > 0) {

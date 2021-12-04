@@ -1,13 +1,13 @@
-import dotenv from 'dotenv'
+import bodyParser from 'body-parser'
 import express from 'express'
 import { connectToDatabase } from './components/database'
-
-dotenv.config()
+import { connectToRedis } from './components/redisClient'
+import env from './config/env'
 const app = express()
-const port = process.env.PORT
-
-Promise.all([connectToDatabase])
+const port = env.PORT || 3000
+Promise.all([connectToDatabase, connectToRedis])
   .then(() => {
+    app.use(bodyParser.json())
     app.get('/', (req, res) => {
       res.send('Hello World!')
     })
