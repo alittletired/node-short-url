@@ -1,23 +1,11 @@
-import bodyParser from 'body-parser'
-import express from 'express'
-import { connectToDatabase } from './components/database'
-import { connectToRedis } from './components/redisClient'
-import env from './config/env'
-const app = express()
-const port = env.PORT || 3000
-Promise.all([connectToDatabase, connectToRedis])
-  .then(() => {
-    app.use(bodyParser.json())
-    app.get('/', (req, res) => {
-      res.send('Hello World!')
-    })
+import app from './app'
 
-    app.listen(port, () => {
-      // eslint-disable-next-line
-      console.log(`Example app listening at http://localhost:${port}`)
-    })
-  })
-  .catch((err) => {
-    console.error(err)
-    process.exit(1)
-  })
+const server = app.listen(app.get('port'), () => {
+  console.log(
+    '  App is running at http://localhost:%d in %s mode',
+    app.get('port'),
+    app.get('env'),
+  )
+  console.log('  Press CTRL-C to stop\n')
+})
+export default server
