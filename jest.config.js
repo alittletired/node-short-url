@@ -1,4 +1,5 @@
 module.exports = {
+  preset: '@shelf/jest-mongodb',
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.json',
@@ -9,5 +10,5 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   testMatch: ['**/test/**/*.test.(ts|js)'],
-  testEnvironment: 'node',
+  setupFilesAfterEnv: ['./test/jest.setup.redis-mock.js'],
 }

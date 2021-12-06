@@ -1,13 +1,4 @@
-import mongoose from 'mongoose'
-export type SignalDocument = mongoose.Document & {
-  id: string
-  seq: number
+import { ObjectId } from 'mongodb'
+export default class Signal {
+  constructor(public seq: number, public id?: ObjectId) {}
 }
-const signalDocument = new mongoose.Schema<SignalDocument>(
-  {
-    _id: { type: String, required: true },
-    seq: Number,
-  },
-  { timestamps: true },
-)
-export default mongoose.model<SignalDocument>('Signal', signalDocument)
