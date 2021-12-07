@@ -1,13 +1,12 @@
 import { createClient } from 'redis'
 import env from '../config/env'
-const CACHE_EXPIRE_TIME = parseInt(env.CACHE_EXPIRE_TIME ?? '84000')
 const redisClient = createClient({
-  url: env.REDIS_URL,
+  url: env.redisUrl,
 })
 
 export async function connectToRedis() {
   redisClient.on('error', (err) => console.error('Redis Client Error', err))
-  await redisClient.connect()
+  await redisClient.connect?.()
   console.log(`Successfully connected to redis`)
 }
 
@@ -33,7 +32,7 @@ export function withCache<T extends Func>(
     }
     value = await fn(...args)
     if (typeof value !== 'undefined') {
-      await redisClient.setEx(cacheKey, expireTime ?? CACHE_EXPIRE_TIME, value)
+      await redisClient.setEx(cacheKey, expireTime ?? env.cacheExpireTime, value)
     }
 
     return value

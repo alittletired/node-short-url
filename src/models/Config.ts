@@ -3,7 +3,7 @@ export default class Config {
   constructor(
     public env: string,
     public maxSubSeq: number,
-    public maxPathLength: string,
+    public maxPathLength: number,
     public shortUrlSite: string,
     public id?: ObjectId,
   ) {}

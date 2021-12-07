@@ -1,7 +1,6 @@
-import UrlMapping from '../models/UrlMapping'
-import Signal from '../models/Signal'
 import configService from './config.service'
 import * as base62 from '../utils/base62'
+import { collections } from '../components/database'
 import { withCache } from '../components/redis'
 import { Mutex } from 'async-mutex'
 const mutex = new Mutex()
@@ -11,13 +10,13 @@ let subSeq = -1
 async function generateNextSeq(maxSubSeq: number): Promise<number> {
   if (shortUrlSeq == -1 || subSeq >= maxSubSeq - 1) {
     await mutex.runExclusive(async () => {
-      const signal = await Signal.findByIdAndUpdate(
-        'shortUrl',
+      const signal = await collections.Signal.findOneAndUpdate(
+        { name: 'shortUrl' },
         { $inc: { seq: 1 } },
-        { new: true, upsert: true, rawResult: true },
+        { upsert: true, returnDocument: 'after' },
       )
       if (signal.value == null) {
-        throw new Error('Cannot find an Signal with the _id: "shortUrl"')
+        throw new Error('Cannot find an Signal with the name: "shortUrl"')
       }
       shortUrlSeq = signal.value.seq
       subSeq = -1
@@ -37,19 +36,18 @@ async function generateNextSeq(maxSubSeq: number): Promise<number> {
  * @returns 返回短链接网址
  */
 async function generate(originUrl: string) {
-  const urlMapping = await UrlMapping.findOne({ originUrl })
+  const urlMapping = await collections.UrlMapping.findOne({ originUrl })
   if (urlMapping != null) {
     return urlMapping.shortUrl
   }
-  const { maxSubSeq, shortUrlSite, maxPathLength } =
-    await configService.getConfig()
+  const { maxSubSeq, shortUrlSite, maxPathLength } = await configService.getConfig()
   const seq = await generateNextSeq(maxSubSeq)
   const shortUrlPath = base62.encode(seq)
   if (shortUrlPath.length > maxPathLength) {
     throw new Error(`path length  exceed ${maxPathLength}`)
   }
   const shortUrl = `${shortUrlSite}/${shortUrlPath}`
-  await UrlMapping.create({ originUrl, shortUrl, seq })
+  await collections.UrlMapping.insertOne({ originUrl, shortUrl })
   return shortUrl
 }
 
@@ -59,8 +57,8 @@ async function generate(originUrl: string) {
  * @returns 原始网址
  */
 async function getOriginUrl(shortUrl: string) {
-  const urlMapping = await UrlMapping.findOne({ shortUrl })
-  if (!urlMapping) {
+  const urlMapping = await collections.UrlMapping.findOne({ shortUrl })
+  if (urlMapping === null) {
     throw new Error(`Cannot find an UrlMapping with the shortUrl: ${shortUrl}`)
   }
   return urlMapping.shortUrl

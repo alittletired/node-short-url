@@ -4,9 +4,9 @@ import Config from '../models/Config'
 let config = null as unknown as Config
 export async function getConfig() {
   if (config != null) return config
-  const configOrNull = await collections.Config.findOne({ env: env.NODE_ENV })
+  const configOrNull = await collections.Config.findOne({ env: env.nodeEnv })
   if (configOrNull == null) {
-    throw new Error(`Cannot find an Config with the env: "${env.NODE_ENV}"`)
+    throw new Error(`Cannot find an Config with the env: "${env.nodeEnv}"`)
   }
   config = configOrNull
   return config
@@ -16,21 +16,16 @@ export async function getConfig() {
  * @param env
  */
 export async function initializeConfig() {
-  const configOrNull = await collections.Config.findOne({ env: env.NODE_ENV })
+  const configOrNull = await collections.Config.findOne({ env: env.nodeEnv })
   if (configOrNull != null) {
     return
   }
-  console.warn({
-    env: env.NODE_ENV,
-    maxSubSeq: env.DEFAULT_MAX_SUB_SEQ,
-    shortUrlSite: env.DEFAULT_SHORT_URL_SITE,
-  })
 
   await collections.Config.insertOne({
-    env: env.NODE_ENV,
-    maxSubSeq: parseInt(env.DEFAULT_MAX_SUB_SEQ),
-    shortUrlSite: env.DEFAULT_SHORT_URL_SITE,
-    maxPathLength: env.DEFAULT_MAX_SUB_SEQ,
+    env: env.nodeEnv,
+    maxSubSeq: env.defaultMaxSubSeq,
+    shortUrlSite: env.defaultShortUrlSite,
+    maxPathLength: env.defaultMaxPathLength,
   })
 }
 export default { getConfig, initializeConfig }

@@ -7,14 +7,10 @@ import shortUrlService from '../services/shortUrl.service'
  * @route POST /shortUrl
  */
 export const postShortUrl = async (req: Request, res: Response) => {
-  await check('originUrl', 'originUrl cannot be blank')
-    .isLength({ min: 1 })
-    .run(req)
+  await check('originUrl', 'originUrl cannot be blank').isLength({ min: 1 }).run(req)
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    // req.flash("errors", errors.array());
-    //  res.statusCode(400);
-    res.json(errors)
+    return res.status(400).json(errors)
   }
   const { originUrl } = req.body
   const shortUrl = await shortUrlService.generate(originUrl)
