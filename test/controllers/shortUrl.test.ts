@@ -1,25 +1,16 @@
 import supertest from 'supertest'
 import app, { initialize } from '../../src/app'
-import env from '../../src/config/env'
-import { closeDatabase } from '../../src/components/database'
+import mongoClient from '../../src/components/database'
 const generateApi = () =>
-  supertest(app)
-    .post('/shortUrl/generate')
-    .set('Content-Type', 'application/json')
+  supertest(app).post('/shortUrl/generate').set('Content-Type', 'application/json')
 const getOriginUrlApi = (shortUrl = '') =>
   supertest(app).get(`/shortUrl/getOriginUrl?shortUrl=${shortUrl}`)
 
 beforeAll(async () => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  env.mongodbUrl = global.__MONGO_URI__
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  env.mongodbName = global.__MONGO_DB_NAME__
   await initialize()
 })
 afterAll(async () => {
-  closeDatabase()
+  mongoClient?.close()
 })
 
 describe('shorturl generate', () => {
@@ -34,10 +25,12 @@ describe('shorturl generate', () => {
       }),
     )
   })
-  test('gen', async () => {
-    const res = await generateApi().send({ originUrl: 'http://originUrl/1' })
-    expect(res.statusCode).toEqual(200)
-    expect(res.body).toHaveProperty('shortUrl')
+  test('generate url', async () => {
+    for (let i = 1; i < 10; i++) {
+      const res = await generateApi().send({ originUrl: `http://originUrl/${i}` })
+      expect(res.statusCode).toEqual(200)
+      expect(res.body).toHaveProperty('shortUrl')
+    }
   })
 })
 describe('shorturl getOriginUrl', () => {
@@ -54,7 +47,12 @@ describe('shorturl getOriginUrl', () => {
   })
   test('not exists ', async () => {
     const res = await getOriginUrlApi('http://originUrl')
-    expect(res.statusCode).toEqual(404)
-    expect(res.body).toHaveProperty('shortUrl')
+    expect(res.statusCode).toEqual(500)
+    // expect(res.body).toHaveProperty('shortUrl')
+  })
+  test('getOriginUrl with cache ', async () => {
+    // const res = await getOriginUrlApi('http://originUrl/1')
+    // expect(res.statusCode).toEqual(200)
+    // expect(res.body).toHaveProperty('shortUrl')
   })
 })

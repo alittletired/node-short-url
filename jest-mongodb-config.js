@@ -5,9 +5,7 @@ module.exports = {
       skipMD5: true,
     },
     watchPathIgnorePatterns: ['globalConfig'],
-    instance: {
-      dbName: 'jest',
-    },
+    instance: {},
     autoStart: false,
   },
 }

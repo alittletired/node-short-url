@@ -1,4 +1,6 @@
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type Func = (...arg: any[]) => any
   namespace NodeJS {
     interface ProcessEnv {
       NODE_ENV: 'development' | 'production' | 'test'
@@ -7,9 +9,9 @@ declare global {
       REDIS_URL: string
       PORT?: string
       CACHE_EXPIRE_TIME: string
-      DEFAULT_MAX_SUB_SEQ: string
-      DEFAULT_SHORT_URL_SITE: string
-      DEFAULT_MAX_PATH_LENGTH: string
+      MAX_SUB_SEQ: string
+      SHORT_URL_SITE: string
+      MAX_PATH_LENGTH: string
     }
   }
 }

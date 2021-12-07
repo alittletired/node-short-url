@@ -1,9 +1,11 @@
 import app, { initialize } from './app'
+import env from './config/env'
+const port = env.port || 3000
 initialize().then(() => {
-  app.listen(app.get('port'), () => {
+  app.listen(port, () => {
     console.log(
       '  App is running at http://localhost:%d in %s mode',
-      app.get('port'),
+      port,
       app.get('env'),
     )
     console.log('  Press CTRL-C to stop\n')

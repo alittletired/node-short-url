@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   testMatch: ['**/test/**/*.test.(ts|js)'],
-  setupFilesAfterEnv: ['./test/jest.setup.redis-mock.js'],
+  setupFilesAfterEnv: ['./test/jest.setup.redis-mock.js', './test/setup-tests.ts'],
 }

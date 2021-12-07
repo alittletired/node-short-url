@@ -1,8 +1,9 @@
-import configService from './config.service'
 import * as base62 from '../utils/base62'
 import { collections } from '../components/database'
 import { withCache } from '../components/redis'
 import { Mutex } from 'async-mutex'
+import env from '../config/env'
+import UrlMapping from '../models/UrlMapping'
 const mutex = new Mutex()
 let shortUrlSeq = -1
 let subSeq = -1
@@ -40,14 +41,14 @@ async function generate(originUrl: string) {
   if (urlMapping != null) {
     return urlMapping.shortUrl
   }
-  const { maxSubSeq, shortUrlSite, maxPathLength } = await configService.getConfig()
+  const { maxSubSeq, shortUrlSite, maxPathLength } = env
   const seq = await generateNextSeq(maxSubSeq)
   const shortUrlPath = base62.encode(seq)
   if (shortUrlPath.length > maxPathLength) {
     throw new Error(`path length  exceed ${maxPathLength}`)
   }
   const shortUrl = `${shortUrlSite}/${shortUrlPath}`
-  await collections.UrlMapping.insertOne({ originUrl, shortUrl })
+  await collections.UrlMapping.insertOne(new UrlMapping(originUrl, shortUrl))
   return shortUrl
 }
 
