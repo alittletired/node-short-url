@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "cross-env NODE_ENV=development  nodemon ./src/server.ts",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/server.ts",
     "restart": "rimraf dist && npm run build && npm start",
-    "test": "jest --forceExit ----detectOpenHandles --coverage --verbose",
+    "test": "cross-env NODE_ENV=test jest --forceExit ----detectOpenHandles --coverage --verbose",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "keywords": [],

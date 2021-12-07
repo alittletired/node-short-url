@@ -10,11 +10,6 @@ const getOriginUrlApi = (shortUrl = '') =>
   supertest(app).get(`/shortUrl/getOriginUrl?shortUrl=${shortUrl}`)
 
 beforeAll(async () => {
-  env.cacheExpireTime = 10
-  env.nodeEnv = 'test'
-  env.defaultMaxPathLength = 8
-  env.defaultMaxSubSeq = 1
-  env.defaultShortUrlSite = 'http://test.shorturl'
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
   env.mongodbUrl = global.__MONGO_URI__
