@@ -7,7 +7,7 @@
     "build": "tsc",
     "dev": "cross-env NODE_ENV=development  nodemon ./src/server.ts",
     "restart": "rimraf dist && npm run build && npm start",
-    "test": "cross-env NODE_ENV=test jest --forceExit ----detectOpenHandles --coverage --verbose",
+    "test": "jest --forceExit ----detectOpenHandles --coverage --verbose",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "keywords": [],

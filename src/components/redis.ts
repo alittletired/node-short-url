@@ -12,6 +12,7 @@ export async function connectToRedis() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Func = (...args: any[]) => Promise<string>
+type KeyFunc<T extends Func> = (...arg: Parameters<T>) => string
 /**
  * 缓存的高阶函数，用于使用缓存的场景
  * @param fn
@@ -21,7 +22,7 @@ type Func = (...args: any[]) => Promise<string>
  */
 export function withCache<T extends Func>(
   fn: T,
-  keyFn: (...arg: Parameters<T>) => string,
+  keyFn: KeyFunc<T>,
   expireTime?: number,
 ) {
   return async function (...args: Parameters<T>) {
@@ -32,7 +33,11 @@ export function withCache<T extends Func>(
     }
     value = await fn(...args)
     if (typeof value !== 'undefined') {
-      await redisClient.setEx(cacheKey, expireTime ?? env.cacheExpireTime, value)
+      await redisClient.SETEX(
+        cacheKey,
+        expireTime ?? env.cacheExpireTime,
+        value,
+      )
     }
 
     return value

@@ -4,8 +4,8 @@
     "module": "commonjs" /* Specify what module code is generated. */,
     "esModuleInterop": true,
     "strict": true /* Enable all strict type-checking options. */,
-    "outDir": "./dist",
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    "outDir": "./dist"
   },
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules"]
 }

@@ -4,10 +4,12 @@ import { check, validationResult } from 'express-validator'
 import shortUrlService from '../services/shortUrl.service'
 /**
  * generate short url.
- * @route POST /shortUrl
+ * @route POST /generate
  */
-export const postShortUrl = async (req: Request, res: Response) => {
-  await check('originUrl', 'originUrl cannot be blank').isLength({ min: 1 }).run(req)
+export const generate = async (req: Request, res: Response) => {
+  await check('originUrl', 'originUrl cannot be blank')
+    .isLength({ min: 1 })
+    .run(req)
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json(errors)
@@ -22,11 +24,19 @@ export const postShortUrl = async (req: Request, res: Response) => {
  * @route get /getOriginUrl?shortUrl=:shortUrl
  */
 export const getOriginUrl = async (req: Request, res: Response) => {
-  const shortUrl = req.params.shortUrl
+  await check('shortUrl', 'shortUrl cannot be blank')
+    .isLength({ min: 1 })
+    .run(req)
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json(errors)
+  }
+  const shortUrl = req.query.shortUrl
   if (typeof shortUrl !== 'string') {
     res.status(400)
-    res.json({ msg: `shortUrl  cannot be blank` })
+    res.json({ msg: `shortUrl cannot be blank` })
   }
-  const originUrl = await shortUrlService.generate(shortUrl)
+  const originUrl = await shortUrlService.getOriginUrl(shortUrl as string)
+
   return res.json({ originUrl })
 }

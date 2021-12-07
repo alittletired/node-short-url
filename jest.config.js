@@ -5,7 +5,6 @@ module.exports = {
       tsconfig: 'tsconfig.json',
     },
   },
-  setupFiles: ['dotenv/config'],
   moduleFileExtensions: ['ts', 'js'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',

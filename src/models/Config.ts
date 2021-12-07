@@ -8,3 +8,4 @@ export default class Config {
     public id?: ObjectId,
   ) {}
 }
+// Config.createIndex = (db: Config) => {}

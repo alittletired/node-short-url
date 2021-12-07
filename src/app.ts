@@ -9,8 +9,8 @@ const app = express()
 app.set('port', env.port)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.post('/shortUrl', shortUrlController.postShortUrl)
-
+app.post('/shortUrl/generate', shortUrlController.generate)
+app.get('/shortUrl/getOriginUrl', shortUrlController.getOriginUrl)
 export async function initialize() {
   await Promise.all([
     connectToDatabase(env.mongodbUrl, env.mongodbName),
