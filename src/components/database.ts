@@ -16,13 +16,15 @@ export const collections = {} as CollectionsType
 export async function connectToDatabase(): Promise<MongoClient> {
   await mongoClient.connect()
   const db = mongoClient.db(env.mongodbName)
-  // const collectionNames = await db.l
+  //todo: 当mongodb集合已存在时，再次调用createCollection会报错，目前采用先查询出集合，判断不存在再进行创建
+  const listCollections = await db.listCollections()
+  const collectionNames = (await listCollections.toArray()).map((s) => s.name)
   for (const [key, modelSchema] of Object.entries(models)) {
-    //todo:check db has been created
-    // const collection = await db.createCollection(key)
-    const collection = db.collection(key)
+    let collection = db.collection(key)
+    if (!collectionNames.includes(key)) {
+      collection = await db.createCollection(key)
+    }
     const { indexes = [], bsonSchema } = modelSchema
-
     await db.command({
       collMod: key,
       validationAction: 'warn',
