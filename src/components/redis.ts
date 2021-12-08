@@ -25,6 +25,7 @@ export function withCache<T extends Func>(fn: T, keyFn: KeyFunc<T>, expireTime?:
     if (value !== null) {
       await redisClient.setEx(cacheKey, expireTime ?? env.cacheExpireTime, value)
     }
+
     return value
   }
 }

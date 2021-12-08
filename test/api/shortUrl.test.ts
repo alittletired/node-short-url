@@ -1,8 +1,8 @@
 import supertest from 'supertest'
 import app, { initialize } from '../../src/app'
+import redisClient from '../../src/components/redis'
 import mongoClient from '../../src/components/database'
 import env from '../../src/config/env'
-import timoutAsync from '../../src/utils/timoutAsync'
 const generateApi = (originUrl?: string) =>
   supertest(app)
     .post('/api/shortUrl/generate')
@@ -50,7 +50,7 @@ describe('shorturl generate', () => {
     const res = await generateApi(originUrl)
     const { shortUrl } = res.body
     expect(shortUrl).not.toBeNull()
-    await timoutAsync(1000)
+    redisClient.flushDb()
     const res1 = await generateApi(originUrl)
     expect(res1.body.shortUrl).toEqual(shortUrl)
   })
@@ -89,7 +89,7 @@ describe('shorturl getOriginUrl', () => {
     const res1 = await getOriginUrlApi(shortUrl)
     expect(res1.statusCode).toEqual(200)
     expect(res1.body.originUrl).toEqual(originUrl)
-    await timoutAsync(env.cacheExpireTime * 1000)
+    await redisClient.flushDb()
     const res2 = await getOriginUrlApi(shortUrl)
     expect(res2.statusCode).toEqual(200)
     expect(res2.body.originUrl).toEqual(originUrl)

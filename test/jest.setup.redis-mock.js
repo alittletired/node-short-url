@@ -11,25 +11,20 @@ jest.mock('redis', () => {
 
   const mockCreateClient = () => {
     const client = createClient()
-    const { get: oldGet, setex } = client
-    const connect = () => Promise.resolve()
+    const connect = async () => true
     function get(key) {
       return new Promise((reslove) => {
         const value = client._selectedDb.get(key)
         reslove(value ?? null)
       })
     }
-
-    function setEx(key, expireTime, value) {
-      return new Promise((reslove) => {
-        setex.apply(client, [key, expireTime, value, reslove])
-      })
-    }
-
+    const setEx = (...args) => new Promise((reslove) => client.setex(...args, reslove))
+    const flushDb = () => new Promise((reslove) => client.flushdb(reslove))
     Object.assign(client, {
       connect,
       get,
       setEx,
+      flushDb,
     })
     return client
   }
