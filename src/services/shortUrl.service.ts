@@ -3,7 +3,6 @@ import { collections } from '../components/database'
 import { withCache } from '../components/redis'
 import { Mutex } from 'async-mutex'
 import env from '../config/env'
-import UrlMapping from '../models/UrlMapping'
 const mutex = new Mutex()
 let shortUrlSeq = -1
 let subSeq = -1
@@ -19,7 +18,7 @@ async function generateNextSeq(maxSubSeq: number): Promise<number> {
       if (signal.value == null) {
         throw new Error('Cannot find an Signal with the name: "shortUrl"')
       }
-      shortUrlSeq = signal.value.seq
+      shortUrlSeq = 1
       subSeq = -1
     })
   }
@@ -48,7 +47,7 @@ async function generate(originUrl: string) {
     throw new Error(`path length  exceed ${maxPathLength}`)
   }
   const shortUrl = `${shortUrlSite}/${shortUrlPath}`
-  await collections.UrlMapping.insertOne(new UrlMapping(originUrl, shortUrl))
+  await collections.UrlMapping.insertOne({ originUrl, shortUrl })
   return shortUrl
 }
 
@@ -62,7 +61,7 @@ async function getOriginUrl(shortUrl: string) {
   if (urlMapping === null) {
     throw new Error(`Cannot find an UrlMapping with the shortUrl: ${shortUrl}`)
   }
-  return urlMapping.shortUrl
+  return urlMapping.originUrl
 }
 
 export default {

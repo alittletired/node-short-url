@@ -1,0 +1,1 @@
+GET http://localhost:3000/shortUrl/getOriginUrl?shortUrl=http%3A%2F%2Fshorturl%2F3e
