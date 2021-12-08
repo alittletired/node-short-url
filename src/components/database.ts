@@ -4,13 +4,13 @@ import models from '../models'
 import { ModelSchma } from '../models/Model'
 
 type UnwrapGenericParam<T> = T extends ModelSchma<infer A> ? A : never
-const mongoClient: MongoClient = new MongoClient(env.mongodbUrl)
 type ModelTypes = typeof models
 type ModelKeys = keyof ModelTypes
-
 type CollectionsType = {
   [m in ModelKeys]: Collection<UnwrapGenericParam<ModelTypes[m]>>
 }
+
+const mongoClient: MongoClient = new MongoClient(env.mongodbUrl)
 export const collections = {} as CollectionsType
 
 export async function connectToDatabase(): Promise<MongoClient> {
@@ -27,7 +27,7 @@ export async function connectToDatabase(): Promise<MongoClient> {
     const { indexes = [], bsonSchema } = modelSchema
     await db.command({
       collMod: key,
-      validationAction: 'warn',
+      validationLevel: 'off',
       validator: { $jsonSchema: bsonSchema },
     })
 

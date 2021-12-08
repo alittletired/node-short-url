@@ -1,17 +1,10 @@
 import redisClient, { withCache } from '../../src/components/redis'
-function timoutAsync(timeoutSeconds: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, timeoutSeconds * 1000)
-  })
-}
+import timoutAsync from '../../src/utils/timoutAsync'
 
 function cacheString(cacheKey: string) {
   return cacheKey + 'value'
 }
 describe('withCache', () => {
-  beforeEach(() => {
-    jest.spyOn(global, 'setTimeout')
-  })
   test('base set and get', async () => {
     const cacheFn = withCache(cacheString, (key) => key)
     const cacheKey = 'cachekey'
@@ -23,7 +16,7 @@ describe('withCache', () => {
     const expireKey = 'expirekey'
     const value = await cacheFn(expireKey)
     expect(value).toMatch(cacheString(expireKey))
-    await timoutAsync(1)
+    await timoutAsync(1000)
     const expiredValue = await redisClient.get(expireKey)
     expect(expiredValue).toBeNull()
   })

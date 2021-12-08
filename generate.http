@@ -1,4 +1,4 @@
-POST http://localhost:3000/shortUrl/generate
+POST http://localhost:3000/api/shortUrl/generate
 Content-Type:application/json; charset=UTF-8
 
 {"originUrl":"originUrl/2"}

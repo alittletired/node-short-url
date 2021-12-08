@@ -1,6 +1,6 @@
 import { check, validationResult } from 'express-validator'
 
-import shortUrlService from '../services/shortUrl.service'
+import shortUrlService from '../services/shortUrl'
 import asyncHandler from '../utils/asyncHandler'
 /**
  * generate short url.

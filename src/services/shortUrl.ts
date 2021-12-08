@@ -4,30 +4,30 @@ import { withCache } from '../components/redis'
 import { Mutex } from 'async-mutex'
 import env from '../config/env'
 const mutex = new Mutex()
-let shortUrlSeq = -1
+let signalValue = -1
 let subSeq = -1
 
 async function generateNextSeq(maxSubSeq: number): Promise<number> {
-  if (shortUrlSeq == -1 || subSeq >= maxSubSeq - 1) {
-    await mutex.runExclusive(async () => {
-      const signal = await collections.Signal.findOneAndUpdate(
-        { name: 'shortUrl' },
-        { $inc: { seq: 1 } },
-        { upsert: true, returnDocument: 'after' },
-      )
-      if (signal.value == null) {
-        throw new Error('Cannot find an Signal with the name: "shortUrl"')
+  //此处采用互斥锁来处理并发场景
+  if (signalValue == -1 || subSeq >= maxSubSeq - 1) {
+    const release = await mutex.acquire()
+    try {
+      if (signalValue == -1 || subSeq >= maxSubSeq - 1) {
+        const signal = await collections.Signal.findOneAndUpdate(
+          { name: 'shortUrl' },
+          { $inc: { value: 1 } },
+          { upsert: true, returnDocument: 'after' },
+        )
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        signalValue = signal.value!.value
+        subSeq = -1
       }
-      shortUrlSeq = signal.value.value
-      subSeq = -1
-    })
-  }
-
-  if (shortUrlSeq == -1 || subSeq >= maxSubSeq - 1) {
-    return await generateNextSeq(maxSubSeq)
+    } finally {
+      release()
+    }
   }
   subSeq += 1
-  return shortUrlSeq * maxSubSeq + subSeq
+  return signalValue * maxSubSeq + subSeq
 }
 
 /**
@@ -42,6 +42,7 @@ async function generate(originUrl: string) {
   }
   const { maxSubSeq, shortUrlSite, maxPathLength } = env
   const seq = await generateNextSeq(maxSubSeq)
+  // console.log(`signalValue:${signalValue},subSeq: ${subSeq},seq: ${seq}`)
   const shortUrlPath = base62.encode(seq)
   if (shortUrlPath.length > maxPathLength) {
     throw new Error(`path length  exceed ${maxPathLength}`)

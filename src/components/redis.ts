@@ -3,9 +3,7 @@ import env from '../config/env'
 const redisClient = createClient({
   url: env.redisUrl,
 })
-
 export async function connectToRedis() {
-  redisClient.on('error', (err) => console.error('Redis Client Error', err))
   await redisClient.connect()
 }
 
@@ -17,11 +15,7 @@ type KeyFunc<T extends Func> = (...arg: Parameters<T>) => string
  * @param expireTime 过期时间，如不设置默认使用站点设置的缓存失效时间
  * @returns
  */
-export function withCache<T extends Func>(
-  fn: T,
-  keyFn: KeyFunc<T>,
-  expireTime?: number,
-) {
+export function withCache<T extends Func>(fn: T, keyFn: KeyFunc<T>, expireTime?: number) {
   return async function (...args: Parameters<T>) {
     const cacheKey = keyFn(...args)
     let value = await redisClient.get(cacheKey)
@@ -29,11 +23,7 @@ export function withCache<T extends Func>(
       value = await fn(...args)
     }
     if (value !== null) {
-      await redisClient.setEx(
-        cacheKey,
-        expireTime ?? env.cacheExpireTime,
-        value,
-      )
+      await redisClient.setEx(cacheKey, expireTime ?? env.cacheExpireTime, value)
     }
     return value
   }

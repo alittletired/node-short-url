@@ -11,9 +11,10 @@ export interface Env {
   shortUrlSite: string
   maxPathLength: number
 }
-dotenv.config()
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 dotenv.config({ path: `.env.${process.env.NODE_ENV}.local` })
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
+dotenv.config()
+
 const env: Env = {
   nodeEnv: process.env.NODE_ENV,
   mongodbUrl: process.env.MONGODB_URL,
