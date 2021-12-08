@@ -1,18 +1,19 @@
 import { Model, ModelSchma } from './Model'
 interface Signal extends Model {
-  seq: number
+  value: number
   name: string
 }
 const signalSchma: ModelSchma<Signal> = {
+  indexes: [[{ name: 1 }, { unique: true }]],
   bsonSchema: {
     type: 'object',
-    // required: ['seq', 'name'],
+    required: ['value', 'name'],
     additionalProperties: false,
     properties: {
-      _id: { bsonType: 'objectId' },
-      seq: {
+      _id: {},
+      value: {
         type: 'number',
-        description: "'seq' is required and is a number",
+        description: "'value' is required and is a number",
       },
       name: {
         type: 'string',

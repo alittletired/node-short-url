@@ -18,7 +18,7 @@ async function generateNextSeq(maxSubSeq: number): Promise<number> {
       if (signal.value == null) {
         throw new Error('Cannot find an Signal with the name: "shortUrl"')
       }
-      shortUrlSeq = signal.value.seq
+      shortUrlSeq = signal.value.value
       subSeq = -1
     })
   }

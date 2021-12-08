@@ -7,11 +7,11 @@ interface UrlMapping extends Model {
 const urlMappingSchma: ModelSchma<UrlMapping> = {
   indexes: [{ originUrl: 1 }, [{ shortUrl: 1 }, { unique: true }]],
   bsonSchema: {
-    bsonType: 'object',
+    type: 'object',
     required: ['originUrl', 'shortUrl'],
     additionalProperties: false,
     properties: {
-      _id: { bsonType: 'objectId' },
+      _id: {},
       originUrl: {
         bsonType: 'string',
         description: "'originUrl' is required and is a string",

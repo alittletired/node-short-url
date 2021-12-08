@@ -2,7 +2,7 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import { connectToDatabase } from './components/database'
 import { connectToRedis } from './components/redis'
-import * as shortUrlController from './controllers/shortUrl'
+import * as shortUrlController from './apis/shortUrl'
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
