@@ -23,8 +23,6 @@ const generatedDataPromise = async (idx: number, repeat = 20) => {
 }
 
 beforeAll(async () => {
-  await mongoClient.connect()
-  await mongoClient.db(env.mongodbName).createCollection('UrlMapping')
   await initialize()
 })
 afterAll(async () => {
@@ -78,16 +76,11 @@ describe('shorturl getOriginUrl', () => {
     expect(res.statusCode).toEqual(404)
   })
 
-  test('getOriginUrl ', async () => {
-    const originUrl = `http://originUrl/with-cache`
+  test('generate and getOriginUrl ', async () => {
+    const originUrl = `http://originUrl/generate-and-getOriginUrl`
     const res = await generateApi(originUrl)
-
     const { shortUrl } = res.body
     const res1 = await getOriginUrlApi(shortUrl)
     expect(res1.body.originUrl).toEqual(originUrl)
-
-    await redisClient.flushDb()
-    const res2 = await getOriginUrlApi(shortUrl)
-    expect(res2.body.originUrl).toEqual(originUrl)
   })
 })
