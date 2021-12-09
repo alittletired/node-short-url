@@ -60,7 +60,7 @@ async function generate(originUrl: string) {
 async function getOriginUrl(shortUrl: string) {
   const urlMapping = await collections.UrlMapping.findOne({ shortUrl })
   if (urlMapping === null) {
-    throw new Error(`Cannot find an UrlMapping with the shortUrl: ${shortUrl}`)
+    return null
   }
   return urlMapping.originUrl
 }

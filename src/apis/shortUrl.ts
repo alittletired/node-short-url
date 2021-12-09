@@ -7,7 +7,9 @@ import asyncHandler from '../utils/asyncHandler'
  * @route POST /generate
  */
 export const generate = asyncHandler(async (req, res) => {
-  await check('originUrl', 'originUrl cannot be blank').isLength({ min: 1 }).run(req)
+  await check('originUrl', 'originUrl cannot be blank')
+    .isLength({ min: 1 })
+    .run(req)
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json(errors)
@@ -22,12 +24,17 @@ export const generate = asyncHandler(async (req, res) => {
  * @route get /getOriginUrl?shortUrl=:shortUrl
  */
 export const getOriginUrl = asyncHandler(async (req, res) => {
-  await check('shortUrl', 'shortUrl cannot be blank').isLength({ min: 1 }).run(req)
+  await check('shortUrl', 'shortUrl cannot be blank')
+    .isLength({ min: 1 })
+    .run(req)
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json(errors)
   }
   const shortUrl = req.query.shortUrl
   const originUrl = await shortUrlService.getOriginUrl(shortUrl as string)
+  if (originUrl == null) {
+    return res.status(404).end()
+  }
   return res.json({ originUrl })
 })
