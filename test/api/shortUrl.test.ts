@@ -22,6 +22,8 @@ const generatedDataPromise = async (idx: number) => {
 }
 
 beforeAll(async () => {
+  await mongoClient.connect()
+  await mongoClient.db(env.mongodbName).createCollection('UrlMapping')
   await initialize()
 })
 afterAll(async () => {
