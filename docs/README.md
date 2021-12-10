@@ -7,13 +7,13 @@
 1. 哈希算法
 
    将源地址通过哈希算法生成唯一散列，如 [MurmurHash](https://github.com/perezd/node-murmurhash)，[nanoid](https://zelark.github.io/nano-id-cc/)。
-   好处: 分布均匀，更安全
-   缺点: 短链接地址一般较短，哈希算法存在着冲突概率，需要借助查库和[布隆过滤器](https://brilliant.org/wiki/bloom-filter/)等手段来检查，并重新生成 hash。
+   好处: 短链接分布均匀，更安全
+   缺点: 短链接地址一般较短，哈希算法存在着冲突概率，并重新生成 hash。
 
 2. 自增 id
    通过定义 ID 生成器（下文均使用发号器来描述），将数字 id 映射到 url 友好的字符串。
    好处: 设计简单
-   缺点: 序号连续，更可预测。需要请求发号器下发 id。
+   缺点: 序号连续。需要请求发号器下发 id。
 
 ### 设计思路
 
@@ -55,11 +55,10 @@
 
 - **UrlMapping** 长短链接映射
 
-  | 字段      | 类型     | 说明    | 索引         |
-  | --------- | -------- | ------- | ------------ |
-  | \_id      | objectid | 主键 id | Primary key  |
-  | originUrl | string   | 源链接  | Index        |
-  | shortUrl  | string   | 短链接  | Unique Index |
+  | 字段    | 类型   | 说明       | 索引        |
+  | ------- | ------ | ---------- | ----------- |
+  | \_id    | string | 短链接路径 | Primary key |
+  | longUrl | string | 源链接     | Index       |
 
   ##### 环境变量
 

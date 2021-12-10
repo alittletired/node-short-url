@@ -1,29 +1,30 @@
 import { check, validationResult } from 'express-validator'
+import env from '../config/env'
 
 import shortUrlService from '../services/shortUrl'
 import asyncHandler from '../utils/asyncHandler'
 /**
- * generate short url.
- * @route POST /generate
+ * createShortUrl short url.
+ * @route POST /createShortUrl
  */
-export const generate = asyncHandler(async (req, res) => {
-  await check('originUrl', 'originUrl cannot be blank')
+export const createShortUrl = asyncHandler(async (req, res) => {
+  await check('longUrl', 'longUrl cannot be blank')
     .isLength({ min: 1 })
     .run(req)
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json(errors)
   }
-  const { originUrl } = req.body
-  const shortUrl = await shortUrlService.generate(originUrl)
-  return res.json({ shortUrl })
+  const { longUrl } = req.body
+  const shortUrlPath = await shortUrlService.createShortUrl(longUrl)
+  return res.json({ shortUrl: `${env.baseDomain}/${shortUrlPath}` })
 })
 
 /**
  * generate short url.
- * @route get /getOriginUrl?shortUrl=:shortUrl
+ * @route get /getLongUrl?shortUrl=:shortUrl
  */
-export const getOriginUrl = asyncHandler(async (req, res) => {
+export const getLongUrl = asyncHandler(async (req, res) => {
   await check('shortUrl', 'shortUrl cannot be blank')
     .isLength({ min: 1 })
     .run(req)
@@ -32,9 +33,9 @@ export const getOriginUrl = asyncHandler(async (req, res) => {
     return res.status(400).json(errors)
   }
   const shortUrl = req.query.shortUrl
-  const originUrl = await shortUrlService.getOriginUrl(shortUrl as string)
-  if (originUrl == null) {
+  const longUrl = await shortUrlService.getLongUrl(shortUrl as string)
+  if (longUrl == null) {
     return res.status(404).end()
   }
-  return res.json({ originUrl })
+  return res.json({ longUrl })
 })

@@ -7,7 +7,7 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.post('/api/shortUrl/generate', shortUrlApi.generate)
-app.get('/api/shortUrl/getOriginUrl', shortUrlApi.getOriginUrl)
+app.get('/api/shortUrl/getlongUrl', shortUrlApi.getlongUrl)
 export async function initialize() {
   await Promise.all([connectToDatabase(), connectToRedis()])
 }

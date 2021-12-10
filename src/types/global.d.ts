@@ -10,7 +10,7 @@ declare global {
       PORT?: string
       CACHE_EXPIRE_TIME: string
       STEP_SIZE: string
-      SHORT_URL_SITE: string
+      BASE_DOMAIN: string
       MAX_PATH_LENGTH: string
     }
   }

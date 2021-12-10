@@ -1,24 +1,20 @@
-import { Model, ModelSchma } from './Model'
+import { ModelSchma } from './Model'
 
-interface UrlMapping extends Model {
-  originUrl: string
-  shortUrl: string
+export interface UrlMapping {
+  longUrl: string
+  _id: string
 }
 const urlMappingSchma: ModelSchma<UrlMapping> = {
-  indexes: [{ originUrl: 1 }, [{ shortUrl: 1 }, { unique: true }]],
+  indexes: [{ longUrl: 1 }],
   bsonSchema: {
     type: 'object',
-    required: ['originUrl', 'shortUrl'],
+    required: ['longUrl'],
     additionalProperties: false,
     properties: {
-      _id: {},
-      originUrl: {
+      _id: { bsonType: 'string' },
+      longUrl: {
         bsonType: 'string',
-        description: "'originUrl' is required and is a string",
-      },
-      shortUrl: {
-        bsonType: 'string',
-        description: "'shortUrl' is required and is a string",
+        description: "'longUrl' is required and is a string",
       },
     },
   },
