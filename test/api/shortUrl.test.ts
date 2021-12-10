@@ -1,8 +1,7 @@
 import supertest from 'supertest'
 import app, { initialize } from '../../src/app'
 import redisClient from '../../src/components/redis'
-import mongoClient from '../../src/components/database'
-import env from '../../src/config/env'
+import mongoClient, { collections } from '../../src/components/database'
 const generateApi = (originUrl?: string) =>
   supertest(app)
     .post('/api/shortUrl/generate')
@@ -59,10 +58,11 @@ describe('shorturl generate', () => {
     await generatedDataPromise(1)
   })
   test('exceed max length should return statusCode 500', async () => {
-    const { maxSubSeq } = env
-    env.maxSubSeq = 2000000
+    collections.Signal.findOneAndUpdate(
+      { name: 'shortUrl' },
+      { $inc: { value: 300000 } },
+    )
     const res = await generateApi(`http://originUrl/maxlength`)
-    env.maxSubSeq = maxSubSeq
     expect(res.statusCode).toEqual(500)
   })
 })

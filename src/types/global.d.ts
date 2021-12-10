@@ -9,7 +9,7 @@ declare global {
       REDIS_URL: string
       PORT?: string
       CACHE_EXPIRE_TIME: string
-      MAX_SUB_SEQ: string
+      STEP_SIZE: string
       SHORT_URL_SITE: string
       MAX_PATH_LENGTH: string
     }

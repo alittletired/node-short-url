@@ -7,7 +7,7 @@ export interface Env {
   redisUrl: string
   port: number
   cacheExpireTime: number
-  maxSubSeq: number
+  stepSize: number
   shortUrlSite: string
   maxPathLength: number
 }
@@ -21,9 +21,9 @@ const env: Env = {
   mongodbName: process.env.MONGODB_NAME,
   redisUrl: process.env.REDIS_URL,
   port: Number(process.env.PORT),
-  cacheExpireTime: Number(process.env.CACHE_EXPIRE_TIME),
-  maxSubSeq: Number(process.env.MAX_SUB_SEQ),
+  cacheExpireTime: Number(process.env.CACHE_EXPIRE_TIME) || 3600,
+  stepSize: Number(process.env.STEP_SIZE) || 1000,
   shortUrlSite: process.env.SHORT_URL_SITE,
-  maxPathLength: Number(process.env.MAX_PATH_LENGTH),
+  maxPathLength: Number(process.env.MAX_PATH_LENGTH) || 8,
 }
 export default env
