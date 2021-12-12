@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "start": "dist/src/server.js",
     "dev": "cross-env NODE_ENV=development nodemon ./src/server.ts",
     "restart": "rimraf dist && npm run build && npm start",
     "test": "cross-env NODE_ENV=test jest --forceExit ----detectOpenHandles --coverage --verbose",

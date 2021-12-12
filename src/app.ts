@@ -1,14 +1,14 @@
 import bodyParser from 'body-parser'
 import express from 'express'
-import { connectToDatabase } from './components/database'
-import { connectToRedis } from './components/redis'
+import { initializeDatabase } from './components/database'
 import * as shortUrlApi from './apis/shortUrl'
+import { initializeBloomFilter } from './components/bloomFilter'
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.post('/api/shortUrl/generate', shortUrlApi.generate)
-app.get('/api/shortUrl/getlongUrl', shortUrlApi.getlongUrl)
+app.post('/api/shortUrl/create', shortUrlApi.createHandler)
+app.get('/api/shortUrl/getLongUrl', shortUrlApi.getLongUrlHandler)
 export async function initialize() {
-  await Promise.all([connectToDatabase(), connectToRedis()])
+  await Promise.all([initializeDatabase(), initializeBloomFilter()])
 }
 export default app

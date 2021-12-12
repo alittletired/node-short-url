@@ -1,13 +1,30 @@
 import { check, validationResult } from 'express-validator'
+import { withCache } from '../components/redis'
 import env from '../config/env'
 
 import shortUrlService from '../services/shortUrl'
 import asyncHandler from '../utils/asyncHandler'
+
+const createShortUrl = withCache(
+  async (longUrl: string) => {
+    const urlMapping = await shortUrlService.create(longUrl)
+    return urlMapping._id
+  },
+  (longUrl) => `longUrl:${longUrl}`,
+)
+const getLongUrl = withCache(
+  async (shortUrl: string) => {
+    const key = shortUrl.substring(shortUrl.lastIndexOf('/') + 1)
+    const urlMapping = await shortUrlService.getByKey(key)
+    return urlMapping?.longUrl
+  },
+  (shortUrl) => `shortUrl:${shortUrl}`,
+)
 /**
- * createShortUrl short url.
- * @route POST /createShortUrl
+ * 创建短链接接口
+ * @route POST /api/short-url/create
  */
-export const createShortUrl = asyncHandler(async (req, res) => {
+export const createHandler = asyncHandler(async (req, res) => {
   await check('longUrl', 'longUrl cannot be blank')
     .isLength({ min: 1 })
     .run(req)
@@ -16,15 +33,15 @@ export const createShortUrl = asyncHandler(async (req, res) => {
     return res.status(400).json(errors)
   }
   const { longUrl } = req.body
-  const shortUrlPath = await shortUrlService.createShortUrl(longUrl)
-  return res.json({ shortUrl: `${env.baseDomain}/${shortUrlPath}` })
+  const shortUrlKey = await createShortUrl(longUrl)
+  return res.json({ shortUrl: `${env.baseDomain}/${shortUrlKey}` })
 })
 
 /**
- * generate short url.
- * @route get /getLongUrl?shortUrl=:shortUrl
+ * 返回长链接
+ * @route get /api/getLongUrl?shortUrl=:shortUrl
  */
-export const getLongUrl = asyncHandler(async (req, res) => {
+export const getLongUrlHandler = asyncHandler(async (req, res) => {
   await check('shortUrl', 'shortUrl cannot be blank')
     .isLength({ min: 1 })
     .run(req)
@@ -33,7 +50,7 @@ export const getLongUrl = asyncHandler(async (req, res) => {
     return res.status(400).json(errors)
   }
   const shortUrl = req.query.shortUrl
-  const longUrl = await shortUrlService.getLongUrl(shortUrl as string)
+  const longUrl = await getLongUrl(shortUrl as string)
   if (longUrl == null) {
     return res.status(404).end()
   }

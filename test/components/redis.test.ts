@@ -1,10 +1,16 @@
-import redisClient, { withCache } from '../../src/components/redis'
+import redisClient, {
+  initializeRedis,
+  withCache,
+} from '../../src/components/redis'
 import timoutAsync from '../../src/utils/timoutAsync'
 
 function cacheString(cacheKey: string) {
   return cacheKey + 'value'
 }
 describe('withCache', () => {
+  test('test initializeRedis', async () => {
+    await initializeRedis()
+  })
   test('base set and get', async () => {
     const cacheFn = withCache(cacheString, (key) => key)
     const cacheKey = 'cachekey'

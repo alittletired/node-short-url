@@ -1,42 +1,46 @@
 import { collections } from '../components/database'
-import { withCache } from '../components/redis'
-import { shorten as idUrlShorten } from './idUrlShortener'
-import { shorten as hashUrlShorten } from './hashUrlShortener'
-import env from '../config/env'
-import { retry } from '../utils/retry'
-const urlShorten = env.useHashUrlShortener ? hashUrlShorten : idUrlShorten
-/**
- * 生成短链接
- * @param longUrl 源网址
- * @returns 返回短链接网址
- */
-let createShortUrl = async (longUrl: string) => {
-  const urlMapping = await collections.UrlMapping.findOne({ longUrl })
-  if (urlMapping != null) {
-    return urlMapping._id
-  }
-  const id = await urlShorten(env.maxPathLength)
-  await collections.UrlMapping.insertOne({ longUrl, _id: id })
-  return id
-}
-//使用hash会存在碰撞
-if (env.useHashUrlShortener) {
-  createShortUrl = retry(createShortUrl, 3)
-}
-/**
- * 获取源链接
- * @param shortUrl 短链接
- * @returns 源链接
- */
-async function getLongUrl(shortUrl: string) {
-  const urlMapping = await collections.UrlMapping.findOne({ shortUrl })
-  if (urlMapping === null) {
-    return null
-  }
-  return urlMapping.longUrl
-}
+import * as bloomFilter from '../components/bloomFilter'
+import env, { Env } from '../config/env'
+import HashKeyGenarator, { KeyGenerator } from './HashKeyGenerator'
+import IdKeyGenarator from './IdKeyGenerator'
+const SHORT_URL_FILTER = 'shorurl:filter'
 
-export default {
-  createShortUrl: withCache(createShortUrl, (longUrl) => `longUrl:${longUrl}`),
-  getLongUrl: withCache(getLongUrl, (shortUrl) => `shorturl:${shortUrl}`),
+export class ShortUrlService {
+  keyGenerator: KeyGenerator
+  constructor(envConfig: Env) {
+    this.keyGenerator = envConfig.useHash
+      ? new HashKeyGenarator({ shortUrlFilter: SHORT_URL_FILTER })
+      : new IdKeyGenarator(envConfig)
+  }
+
+  /**
+   * 获取映射信息
+   * @param shortUrlKey
+   * @returns
+   */
+  getByKey = async (shortUrlKey: string) => {
+    if (!(await bloomFilter.exists(SHORT_URL_FILTER, shortUrlKey))) {
+      return null
+    }
+    const urlMapping = await collections.UrlMapping.findOne({
+      _id: shortUrlKey,
+    })
+    if (urlMapping === null) {
+      return null
+    }
+    return urlMapping
+  }
+  /**
+   * 生成链接映射实体
+   * @param longUrl 长链接地址
+   * @returns
+   */
+  create = async (longUrl: string) => {
+    const shortUrlKey = await this.keyGenerator.generateKey(env.keyLength)
+    const urlMapping = { longUrl, _id: shortUrlKey }
+    await collections.UrlMapping.insertOne(urlMapping)
+    await bloomFilter.add(SHORT_URL_FILTER, shortUrlKey)
+    return urlMapping
+  }
 }
+export default new ShortUrlService(env)

@@ -1,6 +1,6 @@
 import mongoClient, {
   collections,
-  connectToDatabase,
+  initializeDatabase,
 } from '../../src/components/database'
 import env from '../../src/config/env'
 import { Model, ModelSchma } from '../../src/models/Model'
@@ -43,8 +43,8 @@ describe('database', () => {
   afterAll(async () => {
     mongoClient.close()
   })
-  test('test connectToDatabase', async () => {
-    await connectToDatabase()
+  test('test initializeDatabase', async () => {
+    await initializeDatabase()
     expect(collections).toHaveProperty('TestModelWithIndex')
   })
 })

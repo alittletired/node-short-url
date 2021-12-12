@@ -3,7 +3,7 @@ import env from '../config/env'
 const redisClient = createClient({
   url: env.redisUrl,
 })
-export async function connectToRedis() {
+export async function initializeRedis() {
   await redisClient.connect()
 }
 

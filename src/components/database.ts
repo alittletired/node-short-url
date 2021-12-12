@@ -13,12 +13,12 @@ type CollectionsType = {
 const mongoClient: MongoClient = new MongoClient(env.mongodbUrl)
 export const collections = {} as CollectionsType
 
-export async function connectToDatabase(): Promise<MongoClient> {
+export async function initializeDatabase(): Promise<MongoClient> {
   await mongoClient.connect()
   const db = mongoClient.db(env.mongodbName)
   //todo: 当mongodb集合已存在时，再次调用createCollection会报错，目前采用先查询出集合，判断不存在再进行创建
-  const listCollections = await db.listCollections()
-  const collectionNames = (await listCollections.toArray()).map((s) => s.name)
+  const listCollections = await db.listCollections().toArray()
+  const collectionNames = listCollections.map((s) => s.name)
   for (const [key, modelSchema] of Object.entries(models)) {
     let collection = db.collection(key)
     if (!collectionNames.includes(key)) {

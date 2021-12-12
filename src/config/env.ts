@@ -8,10 +8,9 @@ export interface Env {
   port: number
   cacheExpireTime: number
   stepSize: number
-  maxPathLength: number
+  keyLength: number
   baseDomain: string
-  useHashUrlShortener?: boolean
-  hashCollisionRetryCount: number
+  useHash: boolean
 }
 dotenv.config({ path: `.env.${process.env.NODE_ENV}.local` })
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
@@ -26,7 +25,7 @@ const env: Env = {
   port: Number(process.env.PORT),
   cacheExpireTime: Number(process.env.CACHE_EXPIRE_TIME) || 3600,
   stepSize: Number(process.env.STEP_SIZE) || 1000,
-  maxPathLength: Number(process.env.MAX_PATH_LENGTH) || 8,
-  hashCollisionRetryCount: Number(process.env.HASH_COLLISION_RETRY_COUNT) || 3,
+  keyLength: Number(process.env.KEY_LENGTH) || 8,
+  useHash: !!process.env.USE_HASH,
 }
 export default env
