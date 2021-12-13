@@ -36,6 +36,8 @@ nodejs+express+typescript
 
 ## 系统架构
 
+![](./images/app-layer.jpeg)
+
 [创建短链接流程图](./images/create-short-url.png)
 
 [查询长链接流程图](./images/get-long-url.png)
@@ -79,7 +81,7 @@ GET http://localhost:3000/api/shortUrl/getLongUrl?shortUrl={shortUrl}
 
 - **Signal** id 发号器
 
-  当使用 id 算法时使用
+  使用 id 算法时使用
   | 字段 | 类型 | 说明 | 索引 |
   | ----- | -------- | ---------- | ------------ |
   | \_id | objectid | 主键 id | Primary key |
