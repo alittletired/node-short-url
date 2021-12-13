@@ -36,9 +36,9 @@ nodejs+express+typescript
 
 ## 系统架构
 
-[创建短链接流程图](/images/create-short-url.png)
+[创建短链接流程图](./images/create-short-url.png)
 
-[查询长链接流程图](/images/get-long-url.png)
+[查询长链接流程图](./images/get-long-url.png)
 
 ## 接口定义
 
@@ -109,7 +109,5 @@ GET http://localhost:3000/api/shortUrl/getLongUrl?shortUrl={shortUrl}
   | STEP_SIZE         | number                              | 子序列长度,自增 id 算法时生效            | 1000   |          |
 
 ### 单元测试覆盖率
-
-[详细信息](../coverage/lcov-report/index.html)
 
 ![generate-shorturl.png](./images/coverage.png)
