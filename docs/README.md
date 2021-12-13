@@ -4,22 +4,46 @@
 
 短链是通过某种算法，将比较长的源链接映射成较短的链接。f(源地址)->固定域名 + url 友好的字符串，生成的短链接算法一般有两种 **哈希算法**，**自增 id**
 
-1. \**哈希算法*8
+1. **哈希算法**
 
    将源地址通过哈希算法生成唯一散列，如 [MurmurHash](https://github.com/perezd/node-murmurhash)，[nanoid](https://zelark.github.io/nano-id-cc/)。
    好处: 短链接分布均匀，更安全
    缺点: 短链接地址一般较短，哈希算法存在着冲突概率，当冲突时需要重新生成
 
 2. **自增 id**
+
    通过定义 ID 生成器（下文均使用发号器来描述），将数字 id 映射到 url 友好的字符串。
    好处: 设计简单
    缺点: 序号连续。需要请求发号器下发 id
 
-本项目对**哈希算法**, **自增 id**均做了实现。
+本项目对这两种算法分别做了实现
 
 [**哈希算法实现设计**](./hash-design.md)
 
-(**自增 id 实现设计**)(./id-design.md)
+[**自增 id 实现设计**](./id-design.md)
+
+## 环境依赖
+
+[nodejs](https://nodejs.org/en/)
+
+[mongodb](https://docs.mongodb.com/manual/installation/)
+
+[RedisBloom](https://github.com/RedisBloom/RedisBloom)
+
+ps: 可以通过 docker compose 一键启动，在项目根目录在
+
+使用的技术栈为 node+express+typescript
+
+## 接口定义
+
+- 创建短链接
+
+```
+POST /api/shortUrl/create
+Content-Type:application/json; charset=UTF-8
+
+{longUrl}
+```
 
 ### 单元测试覆盖率
 
