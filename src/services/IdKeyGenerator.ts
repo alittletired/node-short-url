@@ -7,7 +7,7 @@ interface Config {
 }
 export default class implements KeyGenerator {
   signalValue = -1
-  currStep = -1
+  currStep = 0
   mutex = new Mutex()
   constructor(public config: Config) {}
   getNextSignalValue = async () => {
@@ -20,15 +20,12 @@ export default class implements KeyGenerator {
     return signal.value!.value - this.config.stepSize
   }
   generateKey = async (keyLength: number) => {
-    if (this.signalValue == -1 || this.currStep >= this.config.stepSize - 1) {
+    if (this.signalValue == -1 || this.currStep >= this.config.stepSize) {
       const release = await this.mutex.acquire()
       try {
-        if (
-          this.signalValue == -1 ||
-          this.currStep >= this.config.stepSize - 1
-        ) {
+        if (this.signalValue == -1 || this.currStep >= this.config.stepSize) {
           this.signalValue = await this.getNextSignalValue()
-          this.currStep = -1
+          this.currStep = 0
         }
       } finally {
         release()
