@@ -2,19 +2,19 @@
 
 ### 问题分析
 
-短链是通过某种算法，将比较长的源链接映射成较短的链接。f(源地址)->固定域名 + url 友好的字符串，生成的短链接算法一般有两种 **哈希算法**，**自增 id**
+短链是通过某种算法，将比较长的源链接映射成较短的链接.生成的短链接算法一般有两种 **哈希算法**，**自增 id**
 
 1. **哈希算法**
 
-   将源地址通过哈希算法生成唯一散列，如 [MurmurHash](https://github.com/perezd/node-murmurhash)，[nanoid](https://zelark.github.io/nano-id-cc/)。
+   将长地址通过哈希算法生成唯一散列字符串。或者使用 id 生成器，如[nanoid](https://zelark.github.io/nano-id-cc/)直接生成，再建立映射关系。
    好处: 短链接分布均匀，更安全
-   缺点: 短链接地址一般较短，哈希算法存在着冲突概率，当冲突时需要重新生成
+   缺点: 短链接地址一般较短，哈希算法存在着冲突概率的，要做额外的工作去保证唯一性
 
 2. **自增 id**
 
-   通过定义 ID 生成器（下文均使用发号器来描述），将数字 id 映射到 url 友好的字符串。
+   通过递增的 ID 生成器（下文均使用发号器来描述），将数字 id 映射到 url 友好的字符串。
    好处: 设计简单
-   缺点: 序号连续。需要请求发号器下发 id
+   缺点: 序号连续可预测。需要请求发号器下发 id
 
 本项目对这两种算法分别做了实现
 
@@ -30,9 +30,15 @@
 
 [RedisBloom](https://github.com/RedisBloom/RedisBloom)
 
-ps: 可以通过 docker compose 一键启动，在项目根目录在
+## 技术栈
 
-使用的技术栈为 node+express+typescript
+nodejs+express+typescript
+
+## 系统架构
+
+[创建短链接流程图](/images/create-short-url.png)
+
+[查询长链接流程图](/images/get-long-url.png)
 
 ## 接口定义
 
@@ -45,11 +51,29 @@ Content-Type:application/json; charset=UTF-8
 {longUrl}
 ```
 
-### 单元测试覆盖率
+参数说明:
+|参数名|类型|是否必填|说明|
+|--|--|--|--|
+|longUrl|string|是｜长链接|
 
-[详细信息](../coverage/lcov-report/index.html)
+返回结果:
 
-![generate-shorturl.png](./images/coverage.png)
+{shortUrl:string}
+
+- 查询长链接
+
+```
+GET http://localhost:3000/api/shortUrl/getLongUrl?shortUrl={shortUrl}
+```
+
+参数说明:
+|参数名|类型|是否必填|说明|
+|--|--|--|--|
+|shortUrl|string|是｜短链接|
+
+返回结果:
+
+{longUrl:string}
 
 ##### 表设计
 
@@ -83,3 +107,9 @@ Content-Type:application/json; charset=UTF-8
   | KEY_LENGTH        | string                              | 最大短链接 path 长度                     | 8      |          |
   | USE_HASH          | string                              | 是否使用 hash 算法，不设置默认为 id 算法 |        |          |
   | STEP_SIZE         | number                              | 子序列长度,自增 id 算法时生效            | 1000   |          |
+
+### 单元测试覆盖率
+
+[详细信息](../coverage/lcov-report/index.html)
+
+![generate-shorturl.png](./images/coverage.png)
