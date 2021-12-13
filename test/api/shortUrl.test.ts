@@ -1,6 +1,6 @@
 import supertest from 'supertest'
 import app, { initialize } from '../../src/app'
-import mongoClient, { collections } from '../../src/components/database'
+import mongoClient from '../../src/components/database'
 jest.mock('../../src/components/bloomFilter')
 const createApi = (longUrl?: string) =>
   supertest(app)
